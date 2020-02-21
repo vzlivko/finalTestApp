@@ -4,6 +4,7 @@ const app = express();
 const body_parser = require("body-parser");
 const mongoose = require("mongoose");
 const routes = require("../routes/routes");
+const cookieParser = require("cookie-parser");
 const dev_db_url =
   "mongodb+srv://admin:admin322@cluster0-yy1sj.mongodb.net/test?retryWrites=true&w=majority";
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
@@ -27,6 +28,7 @@ app.use(body_parser.json());
 app.use(body_parser.urlencoded({ extended: true }));
 app.set("views", "./pug_files");
 app.set("view engine", "pug");
+app.use(cookieParser());
 app.use("/", routes);
 app.use("/pages", express.static("."));
 

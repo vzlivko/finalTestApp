@@ -4,6 +4,7 @@ const Track = require("../models/music");
 const content = "/home/user/finalTestApp/views/page.html";
 const bcrypt = require("bcrypt");
 const saltRounds = 5;
+let loggedUser;
 
 exports.homePage = (req, res) => {
   res.sendFile(content);
@@ -20,25 +21,28 @@ exports.userHomePage = (req, res) => {
 exports.myMusic = (req, res) => {
   res.send("my music");
 };
-exports.profilePage = (req, res) => {};
+exports.profilePage = (req, res) => {
+  if (loggedUser) res.render("profile", { user: loggedUser });
+  else res.sendStatus(401);
+};
 exports.updateProfile = (req, res) => {};
 exports.loginPage = (req, res) => {
   res.sendFile(content);
 };
 exports.loginResult = async (req, res) => {
   const { email, password } = req.body;
-  const loggedUser = await User.findOne({ email: email });
+  loggedUser = await User.findOne({ email: email });
   if (loggedUser) {
     bcrypt.compare(password, loggedUser.password, (err, result) => {
       if (err) return next(err);
-      if (result)
+      if (result) {
         res.render("redirect", {
           title: "Login",
           text: `Welcome, ${email}`,
           url: email,
           linkText: "Go to home page"
         });
-      else
+      } else
         res.render("redirect", {
           title: "Login",
           text: `Wrong password`,
